@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #111827; /* dark theme base */
+  background-image: url('https://bg.ibelick.com/bg-grid.svg');
+  background-attachment: fixed;
+}
