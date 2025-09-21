@@ -4,7 +4,7 @@ const Contact: React.FC = () => (
   <div className="max-w-xl mx-auto py-12">
     <h1 className="text-2xl font-bold mb-4">Contact Us</h1>
     <p className="text-neutral-700 mb-2">
-      For any queries, please email us at <a href="mailto:eventsync7@gmail.com" className="text-primary-600 underline">eventsync7@gmail.com</a>.
+      For any queries, please email us at <a href="mailto:eventsync77@gmail.com" className="text-primary-600 underline">eventsync77@gmail.com</a>.
     </p>
     {
         <p className="text-neutral-700">

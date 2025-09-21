@@ -1,7 +1,10 @@
+// Export registrations to Excel
+// (This block is removed because the actual implementation exists below)
 import React, { useEffect, useState } from 'react';
+import * as XLSX from 'xlsx';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebaseConfig';
-import { collection, query, where, getDocs, updateDoc, doc, getDoc, deleteDoc } from 'firebase/firestore'; // Import deleteDoc
+import { collection, query, where, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore'; // Import deleteDoc
 import { useEventStore } from '../stores/eventStore'; // Import the store
 import Button from '../components/ui/Button';
 import toast from 'react-hot-toast';
@@ -15,7 +18,15 @@ const VerifyPayments: React.FC = () => {
     const navigate = useNavigate();
     const { cancelRegistration } = useEventStore(); // Get the cancelRegistration function
     const [registrations, setRegistrations] = useState<any[]>([]);
-    const [event, setEvent] = useState<any>(null);
+    type EventType = {
+        id: string;
+        title?: string;
+        organizerType?: string;
+        organizerId?: string;
+        // add other event properties as needed
+    };
+    
+    const [event, setEvent] = useState<EventType | null>(null);
     const [club, setClub] = useState<Club | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [actionId, setActionId] = useState<string | null>(null);
@@ -27,7 +38,8 @@ const VerifyPayments: React.FC = () => {
             try {
                 const eventDoc = await getDoc(doc(db, 'events', eventId));
                 if (eventDoc.exists()) {
-                    const eventData = { id: eventDoc.id, ...eventDoc.data() };
+                    const { id: _ignored, ...eventDataRaw } = eventDoc.data() as EventType;
+                    const eventData = { id: eventDoc.id, ...eventDataRaw };
                     setEvent(eventData);
 
                     if (eventData.organizerType === 'club' && eventData.organizerId) {
@@ -70,7 +82,7 @@ const VerifyPayments: React.FC = () => {
             const userDoc = await getDoc(doc(db, 'users', registration.userId));
             if (userDoc.exists()) {
                 const student = userDoc.data();
-                await fetch('https://live-campus.vercel.app/api/send-payment-verification', {
+                await fetch('http://localhost:5000/api/send-payment-verification', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -99,7 +111,7 @@ const VerifyPayments: React.FC = () => {
             const userDoc = await getDoc(doc(db, 'users', registration.userId));
             if (userDoc.exists()) {
                 const student = userDoc.data();
-                await fetch('https://live-campus.vercel.app/api/send-payment-rejection', {
+                await fetch('http://localhost:5000/api/send-payment-rejection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -145,6 +157,30 @@ const VerifyPayments: React.FC = () => {
         return <div className="flex justify-center items-center min-h-[60vh]"><LoadingSpinner size="lg" text="Loading Registrations..." /></div>;
     }
 
+    // Export registrations to Excel
+    const handleExportToExcel = () => {
+        if (!registrations || registrations.length === 0) {
+            toast.error('No registrations to export.');
+            return;
+        }
+        // Customize exported fields as needed
+        const exportData = registrations.map(reg => ({
+            Name: reg.name || reg.studentName || '',
+            Email: reg.email || '',
+            Event: event?.title || '',
+            Status: reg.status || '',
+            RegisteredAt: reg.registeredAt || '',
+            PaymentStatus: reg.paymentStatus || '',
+            TransactionID: reg.transactionId || '',
+            Verified: reg.paymentVerified ? 'Yes' : 'No',
+        }));
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Registrations');
+        XLSX.writeFile(workbook, `${event?.title || 'event'}-registrations.xlsx`);
+        toast.success('Exported to Excel!');
+    };
+
     return (
         <div className="max-w-4xl mx-auto py-8">
             <Button variant="ghost" size="sm" onClick={() => navigate(`/events/${eventId}`)} className="mb-4">
@@ -152,7 +188,7 @@ const VerifyPayments: React.FC = () => {
             </Button>
             <h1 className="text-3xl font-bold text-gray-900">Verify Payments</h1>
             <p className="text-gray-600 mb-6">Event: {event?.title}</p>
-            
+            <Button onClick={handleExportToExcel} variant="secondary" className="mb-4">Export to Excel</Button>
             <div className="bg-white rounded-lg border shadow-sm">
                 <div className="divide-y divide-gray-200">
                     {registrations.filter(r => r.transactionId).length > 0 ? registrations.filter(r => r.transactionId).map(reg => (

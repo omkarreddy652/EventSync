@@ -11,7 +11,7 @@ const createApprovalHtml = (name) => `
     <p>Welcome to EventSync! Your account has been successfully approved by the administrator.</p>
     <p>You can now log in to explore events, join clubs, and engage with the campus community.</p>
     <div style="text-align: center; margin: 30px 0;">
-      <a href="https://eventsync.vercel.app/login" style="background-color: #007bff; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+      <a href="http://localhost:5173/login" style="background-color: #007bff; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
         Login to Your Account
       </a>
     </div>
@@ -54,24 +54,23 @@ export default async function handler(req, res) {
   }
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
-    port: 587,
+    service:'gmail',
     auth: {
-      user: 'eventsync7@gmail.com',
-      pass: '3NWO29BxThmcJKkE',
+      user: 'eventsync77@gmail.com',
+      pass: 'vxnu aknq nzts xxdp',
     },
   });
 
   const isRejected = rejected === true;
 
   const mailOptions = {
-    from: `"EventSync" <eventsync7@gmail.com>`,
+    from: `"EventSync" <eventsync77@gmail.com>`,
     to: email,
     subject: isRejected ? 'Your EventSync Account Request' : 'Welcome to EventSync! Your Account is Approved',
     html: isRejected ? createRejectionHtml(name) : createApprovalHtml(name),
     text: isRejected
       ? `Hello ${name},\n\nWe regret to inform you that your account request has been rejected by the admin.\n\nThank you!`
-      : `Hello ${name},\n\nYour account has been approved by the admin. You can now log in and use the portal: https://eventsync.vercel.app/login\n\nThank you!`,
+      : `Hello ${name},\n\nYour account has been approved by the admin. You can now log in and use the portal: http://localhost:5173/login\n\nThank you!`,
   };
 
   try {

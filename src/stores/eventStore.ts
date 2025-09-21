@@ -67,7 +67,7 @@ export const useEventStore = create<EventState>((set, get) => ({
 
             if (students.length > 0) {
                 try {
-                    await fetch('https://eventsync.vercel.app/api/event-notification', {
+                    await fetch('http://localhost:5000/api/event-notification', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ event: { id: docRef.id, ...eventData }, students }),
@@ -119,7 +119,7 @@ export const useEventStore = create<EventState>((set, get) => ({
 
         if (students.length > 0) {
           try {
-            await fetch('https://eventsync.vercel.app/api/event-notification', {
+            await fetch('http://localhost:5000/api/event-notification', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ event: eventToApprove, students }),
@@ -169,7 +169,8 @@ export const useEventStore = create<EventState>((set, get) => ({
       toast.success('Event updated!');
       set({ isLoading: false });
       
-      return get().getEventById(id);
+      const updatedEvent = get().getEventById(id);
+      return updatedEvent ? updatedEvent : null;
     } catch (error) {
       toast.error('Failed to update event');
       set({ isLoading: false });

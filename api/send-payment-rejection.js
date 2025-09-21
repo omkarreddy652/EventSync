@@ -40,11 +40,10 @@ export default async function handler(req, res) {
   }
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
-    port: 587,
+    service:'gmail',
     auth: {
-      user: 'eventsync7@gmail.com',
-      pass: '3NWO29BxThmcJKkE',
+      user: 'eventsync77@gmail.com',
+      pass: 'vxnu aknq nzts xxdp',
     },
   });
 
@@ -53,7 +52,7 @@ export default async function handler(req, res) {
     : 'Please check your transaction details and try again.';
 
   const mailOptions = {
-    from: '"EventSync" <eventsync7@gmail.com>',
+    from: '"EventSync" <eventsync77@gmail.com>',
     to: email,
     subject: `❗ Payment Rejected for ${eventName}`,
     html: createHtmlBody(name, eventName, reasonText, clubDetails),

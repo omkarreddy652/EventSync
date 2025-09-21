@@ -34,7 +34,7 @@ const createHtmlBody = (event) => `
     </div>
 
     <div style="text-align: center; margin: 30px 0;">
-      <a href="https://eventsync.vercel.app/events/${event.id}" style="background-color: #4f46e5; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+      <a href="http://localhost:5173/events/${event.id}" style="background-color: #4f46e5; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
         View Event & Register
       </a>
     </div>
@@ -60,11 +60,10 @@ export default async function handler(req, res) {
   }
 
   const transporter = nodemailer.createTransport({
-    host: 'smtp-relay.brevo.com',
-    port: 587,
+    service:'gmail',
     auth: {
-      user: 'eventsync7@gmail.com',
-      pass: '3NWO29BxThmcJKkE',
+      user: 'eventsync77@gmail.com',
+      pass: 'vxnu aknq nzts xxdp',
     },
   });
 
@@ -72,11 +71,11 @@ export default async function handler(req, res) {
   const studentEmails = students.map(student => student.email);
 
   const mailOptions = {
-    from: '"EventSync" <eventsync7@gmail.com>',
+    from: '"EventSync" <eventsync77@gmail.com>',
     bcc: studentEmails, // Changed from 'to' to 'bcc' for privacy
     subject: `📢 New Event Announcement: ${event.title}`,
     html: createHtmlBody(event),
-    text: `Hello!\n\nA new event has been published on EventSync!\n\nEvent: ${event.title}\nDescription: ${event.description}\nDate: ${formatDateTime(event.startDate)}\nLocation: ${event.location}\n\nFor more information and to register, visit: https://eventsync.vercel.app/events/${event.id}\n\nSee you there!\nEventSync Team`,
+    text: `Hello!\n\nA new event has been published on EventSync!\n\nEvent: ${event.title}\nDescription: ${event.description}\nDate: ${formatDateTime(event.startDate)}\nLocation: ${event.location}\n\nFor more information and to register, visit: http://localhost:5173/events/${event.id}\n\nSee you there!\nEventSync Team`,
   };
 
   try {

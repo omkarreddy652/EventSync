@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { db } from '../firebaseConfig';
-import { collection, query, where, getDocs, updateDoc, doc, getDoc, runTransaction } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, runTransaction } from 'firebase/firestore';
 import QrScanner from 'react-qr-scanner';
 import Button from '../components/ui/Button';
 import toast from 'react-hot-toast';
 import Input from '../components/ui/Input';
 import Badge from '../components/ui/Badge';
 import { UserCheck, UserX, Users, QrCode, Search, ArrowLeft, VideoOff } from 'lucide-react';
-import { isPast, parseISO } from 'date-fns';
+import * as XLSX from 'xlsx';
 
 const ToggleSwitch = ({ checked, onChange }: { checked: boolean; onChange: (checked: boolean) => void }) => (
   <label className="relative inline-flex items-center cursor-pointer">
@@ -18,6 +18,26 @@ const ToggleSwitch = ({ checked, onChange }: { checked: boolean; onChange: (chec
 );
 
 const EventAttendance: React.FC = () => {
+  // Export attendance to Excel
+  const handleExportToExcel = () => {
+    if (!registrations || registrations.length === 0) {
+      toast.error('No attendance data to export.');
+      return;
+    }
+    const exportData = registrations.map(reg => ({
+      Name: reg.name || '',
+      RegNo: reg.regNo || '',
+      Branch: reg.branch || '',
+      Status: reg.status === 'attended' ? 'Present' : 'Absent',
+      CheckedInAt: reg.checkedInAt || '',
+      Event: event?.title || '',
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Attendance');
+    XLSX.writeFile(workbook, `${event?.title || 'event'}-attendance.xlsx`);
+    toast.success('Exported to Excel!');
+  };
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const [registrations, setRegistrations] = useState<any[]>([]);
@@ -167,6 +187,7 @@ const EventAttendance: React.FC = () => {
 
   return (
     <div className="animate-fade-in space-y-8">
+      <Button onClick={handleExportToExcel} variant="secondary" className="mb-4">Export Attendance to Excel</Button>
       <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
           <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-2 -ml-2">

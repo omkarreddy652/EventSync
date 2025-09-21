@@ -10,7 +10,7 @@ const firebaseConfig = {
   storageBucket: "event-5030a.firebasestorage.app",
   messagingSenderId: "731185278241",
   appId: "1:731185278241:web:d0f4231f6b1003bd3be260",
-  measurementId: "G-RSP4T9M2KG"
+  measurementId: "G-RSP4T9M2KG"
 };
 
 const app = initializeApp(firebaseConfig);

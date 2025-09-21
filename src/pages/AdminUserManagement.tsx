@@ -95,7 +95,7 @@ const AdminUserManagement: React.FC = () => {
         toast.success('User approved!');
 
         try {
-            await fetch('https://live-campus.vercel.app/api/send-approval', {
+            await fetch('http://localhost:5000/api/send-approval', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: userEmail, name: userName }),
@@ -112,7 +112,7 @@ const AdminUserManagement: React.FC = () => {
         toast.success('User rejected!');
 
         try {
-            await fetch('https://live-campus.vercel.app/api/send-approval', {
+            await fetch('http://localhost:5000/api/send-approval', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
